@@ -3,7 +3,7 @@ import colores
 import random
 import preguntas
 
-tablero = [0,1,0,0,0,3,0,0,0,0,0,1,0,10,2,1,1,0,0,0,1,0,0,2,0,0,0,1,0,0,0]
+tablero = [0,1,0,0,0,3,0,0,0,0,0,1,0,1,2,1,1,0,0,0,1,0,0,2,0,0,0,1,0,0,0]
 posicion = 15
 
 
@@ -13,14 +13,14 @@ def crear_texto(texto:str, color= colores.WHITE, tamaño=30,  fuente:str="Arial"
     return texto_render
 
 
-def crear_rect(texto_render, centro=(0,0)):
+def crear_rect(texto_render:str, centro=(0,0))->any:
     rect = texto_render.get_rect(center=centro)
     return rect
 
 
 
 
-def dibujar_textos(pantalla, lista_elementos):
+def dibujar_textos(pantalla, lista_elementos:list):
     for texto_render, rect in lista_elementos:
         pantalla.blit(texto_render, rect)
 
@@ -80,14 +80,14 @@ def mover(posicion: dict, respuesta_usuario: str, respuesta_correcta: str, table
     # avanzar o retroceder 1
     posicion["valor"] += operacion
 
-    # Limitar que no se salga del tablero antes de calcular salto extra
-    posicion["valor"] = max(0, min(posicion["valor"], len(tablero) - 1))
+    #llimitar que no se salga del tablero antes de calcular salto extra
+    #posicion["valor"] = max(0, min(posicion["valor"], len(tablero) - 1))
 
     # calcular salto adicional según tablero
     posicion["valor"] = calcular_direccion_tablero(posicion["valor"], tablero, operacion)
 
-    # Limitar que no se salga del tablero después del salto
-    posicion["valor"] = max(0, min(posicion["valor"], len(tablero) - 1))
+    # limitar que no se salga del tablero después del salto
+    #posicion["valor"] = max(0, min(posicion["valor"], len(tablero) - 1))
 
     print(f"Tu posición actual es {posicion['valor']} !")
 
@@ -114,23 +114,25 @@ def trivia(pantalla, preguntas_copia, posicion):
         lista_pregunta = [(texto_pregunta, rect_pregunta)]
 
         lista_opciones, rects_opciones = crear_elementos_opciones(pregunta)
+        respuesta_correcta = pregunta["respuesta_correcta"]
 
         jugando = True
         while jugando:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+
 
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     pos_click = evento.pos
                     for letra, rect in rects_opciones.items():
+                        print(letra, rect)
                         if rect.collidepoint(pos_click):
-                            mover(posicion, letra, pregunta["respuesta_correcta"], tablero)
+                            mover(posicion, letra, respuesta_correcta, tablero)
                             estado = verificar_estado_juego(posicion["valor"], tablero)
                             if estado in ["gano", "perdio"]:
                                 jugando = False
-                                return estado  # termina la trivia
+                                return estado  # termina la trivia aca
                             jugando = False
                             break
 
@@ -159,13 +161,21 @@ def crear_elementos_opciones(pregunta_dict):
 
     for i in range(len(letras)):
         letra = letras[i]
+
+        # Armo el texto de las opciones (a,b,c) y sus respuestas 
         texto = f"{letra.upper()}) {pregunta_dict[f'respuesta_{letra}']}"
+
+        #Creo texto render y su rect
         texto_render = crear_texto(texto)
         rect = crear_rect(texto_render, (posiciones_x[i], y))
 
+        #lleno la lista con los textos render y rects, en tuplas para usar la funcion dibujar
         lista_tuplas.append((texto_render, rect))
+
+        #lleno la llave para guardar los rects con sus respectivas letras
         rects_opciones[letra] = rect
 
+    #devuelvo una tupla de listas y llaves
     return lista_tuplas, rects_opciones
 
 
@@ -174,9 +184,8 @@ def crear_elementos_opciones(pregunta_dict):
 
 def ingresar_nombre(pantalla):
     nombre = ""
-    font = pygame.font.SysFont("Arial", 30)
-    input_activo = True
 
+    input_activo = True
     while input_activo:
         pantalla.fill(colores.BLACK)
 
@@ -197,11 +206,11 @@ def ingresar_nombre(pantalla):
 
         # Render del texto
         texto_titulo = crear_texto("Ingrese su nombre:")
-        rect_titulo = crear_rect(texto_titulo, (200, 150))
+        rect_titulo = crear_rect(texto_titulo, (400, 250))
 
 
         texto_nombre = crear_texto(nombre)
-        rect_nombre = crear_rect(texto_nombre, (200, 200))
+        rect_nombre = crear_rect(texto_nombre, (400, 300))
 
 
 
