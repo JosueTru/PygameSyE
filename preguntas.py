@@ -107,10 +107,3 @@ preguntas = [
 ]
 
 
-def obtener_respuesta_correcta(pregunta_dict):
-    letra_correcta = pregunta_dict["respuesta_correcta"]  # ej: "a", "b" o "c"
-    texto_correcto = pregunta_dict[f"respuesta_{letra_correcta}"]  # ej: "Rusia", "La piel", etc.
-    return texto_correcto
-
-
-print(obtener_respuesta_correcta(preguntas[1]))

@@ -3,7 +3,8 @@ import colores
 import random
 import preguntas
 
-tablero = [0,1,0,0,0,3,0,0,0,0,0,1,0,0,2,1,1,0,0,0,1,0,0,2,0,0,0,1,0,0,0]
+tablero = [0,1,0,0,0,3,0,0,0,0,0,1,0,10,2,1,1,0,0,0,1,0,0,2,0,0,0,1,0,0,0]
+posicion = 15
 
 
 def crear_texto(texto:str, color= colores.WHITE, tamaño=30,  fuente:str="Arial" )->any:
@@ -51,48 +52,98 @@ def copiar_y_mezclar(preguntas):
 
 
 
-def trivia(pantalla, preguntas_copia):
+def posicion_a_pixel(posicion_valor):
+    min_x = 200
+    max_x = 1200
+    max_pos = len(tablero) - 1
+    x = min_x + (posicion_valor / max_pos) * (max_x - min_x)
+    return int(x)
 
-    
+
+def calcular_direccion_base(respuesta:str, respuesta_correcta:str) -> int:
+    if respuesta == respuesta_correcta:
+        print("-CORRECTO-")
+        return 1
+    else:
+        print("-INCORRECTO-")
+        return -1
+
+def calcular_direccion_tablero(posicion:int, tablero:list, operacion:int) -> int:
+    salto_adicional = tablero[posicion]
+    # Mover hacia la dirección con el salto adicional
+    posicion += salto_adicional * operacion
+    return posicion
+
+def mover(posicion: dict, respuesta_usuario: str, respuesta_correcta: str, tablero: list) -> int:
+    operacion = calcular_direccion_base(respuesta_usuario, respuesta_correcta)
+
+    # avanzar o retroceder 1
+    posicion["valor"] += operacion
+
+    # Limitar que no se salga del tablero antes de calcular salto extra
+    posicion["valor"] = max(0, min(posicion["valor"], len(tablero) - 1))
+
+    # calcular salto adicional según tablero
+    posicion["valor"] = calcular_direccion_tablero(posicion["valor"], tablero, operacion)
+
+    # Limitar que no se salga del tablero después del salto
+    posicion["valor"] = max(0, min(posicion["valor"], len(tablero) - 1))
+
+    print(f"Tu posición actual es {posicion['valor']} !")
+
+    return posicion["valor"]
+
+
+def verificar_estado_juego(posicion, tablero):
+    if posicion <= 0:
+        print("Perdiste. Volvé a intentarlo.")
+        return "perdio"
+    elif posicion >= len(tablero) - 1:
+        print("¡FELICIDADES, GANASTE!")
+        return "gano"
+    else:
+        return "continua"
+
+
+def trivia(pantalla, preguntas_copia, posicion):
     while len(preguntas_copia) > 0:
-
         pregunta = sacar_pregunta(preguntas_copia)
-
-        # Crear texto y rectángulo de la pregunta
-
-        texto_pregunta = crear_texto(pregunta["pregunta"])
-        rect_pregunta = crear_rect(texto_pregunta, (700, 150))
-
 
         texto_pregunta = crear_texto(pregunta["pregunta"])
         rect_pregunta = crear_rect(texto_pregunta, (700, 150))
         lista_pregunta = [(texto_pregunta, rect_pregunta)]
-        lista_opciones = crear_elementos_opciones(pregunta)
 
-
+        lista_opciones, rects_opciones = crear_elementos_opciones(pregunta)
 
         jugando = True
         while jugando:
             for evento in pygame.event.get():
-                    if evento.type == pygame.QUIT:
-                        pygame.quit()
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
 
-                
-                    if evento.type == pygame.MOUSEBUTTONDOWN:
-                        posicion = evento.pos
-                        jugando = False
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    pos_click = evento.pos
+                    for letra, rect in rects_opciones.items():
+                        if rect.collidepoint(pos_click):
+                            mover(posicion, letra, pregunta["respuesta_correcta"], tablero)
+                            estado = verificar_estado_juego(posicion["valor"], tablero)
+                            if estado in ["gano", "perdio"]:
+                                jugando = False
+                                return estado  # termina la trivia
+                            jugando = False
+                            break
 
-        
-            pantalla.fill((0,0,0))
-            #dibujar_textos(pantalla, [(texto_pregunta, rect_pregunta)])
+            pantalla.fill((0, 0, 0))
             dibujar_textos(pantalla, lista_pregunta + lista_opciones)
+
+            pos_x = posicion_a_pixel(posicion["valor"])
+            texto_pos = crear_texto(f"Posición: {posicion['valor']}")
+            rect_pos = crear_rect(texto_pos, (pos_x, 850))
+            pantalla.blit(texto_pos, rect_pos)
 
             pygame.display.flip()
 
-
-
-        print(pregunta["pregunta"])
-        print(len(preguntas_copia))
 
 
 
@@ -104,6 +155,7 @@ def crear_elementos_opciones(pregunta_dict):
     y = 250
 
     lista_tuplas = []
+    rects_opciones = {}
 
     for i in range(len(letras)):
         letra = letras[i]
@@ -112,8 +164,9 @@ def crear_elementos_opciones(pregunta_dict):
         rect = crear_rect(texto_render, (posiciones_x[i], y))
 
         lista_tuplas.append((texto_render, rect))
+        rects_opciones[letra] = rect
 
-    return lista_tuplas
+    return lista_tuplas, rects_opciones
 
 
 
@@ -165,3 +218,6 @@ def ingresar_nombre(pantalla):
 
 
 
+def guardar_datos(nombre_jugador: str, posicion: int):
+    with open("puntaje.csv", "a", encoding="utf-8") as puntajes:
+        puntajes.write(f"{nombre_jugador} || {posicion} puntos.\n")

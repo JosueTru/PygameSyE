@@ -3,6 +3,7 @@ from colores import *
 from funciones import *
 from preguntas import *
 
+posicion = {"valor": 15}
 
 pygame.init()
 pygame.display.set_caption("Mi Juego")
@@ -36,23 +37,32 @@ while flag_correr:
     for evento in lista_eventos:
         if evento.type == pygame.QUIT:
             print("cerrando juegooo")
+            guardar_datos(nombre_jugador, posicion["valor"])
+
             flag_correr = False
         
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if rect_jugar.collidepoint(evento.pos):
-                #pregunta = sacar_pregunta(preguntas_copia)
-                #print(pregunta)
-                #print(len(preguntas_copia))
+                resultado = trivia(pantalla, preguntas_copia, posicion)
+                if resultado == "gano":
+                    print("¡Ganaste el juego!")
+                    guardar_datos(nombre_jugador, posicion["valor"])
 
-                trivia(pantalla, preguntas_copia)
-                
+                    flag_correr = False
+                elif resultado == "perdio":
+                    print("Perdiste el juego.")
+                    guardar_datos(nombre_jugador, posicion["valor"])
 
+                    flag_correr = False
 
             if rect_puntaje.collidepoint(evento.pos):
                 print("Apretaste puntajee")
             if rect_salir.collidepoint(evento.pos):
                 print("Apretaste Salir")
                 flag_correr = False
+                guardar_datos(nombre_jugador, posicion["valor"])
+
+
 
 
 
