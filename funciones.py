@@ -9,7 +9,7 @@ def crear_render_y_rect(texto:str, coordenadas:tuple, fuente, color:tuple=BLACK)
     return render, rect
 
 
-def ingresar_nombre(pantalla):
+def ingresar_nombre(pantalla,fondo):
 
     nombre_jugador = ""
 
@@ -32,7 +32,7 @@ def ingresar_nombre(pantalla):
                     flag_correr = False
 
 
-        pantalla.fill(COLOR_CELESTE) 
+        pantalla.blit(fondo, (0, 0)) 
 
         texto_titulo, rect_titulo = crear_render_y_rect("Ingrese su nombre: ", (800,300), BLACK)
         texto_nombre, rect_nombre = crear_render_y_rect(nombre_jugador, (800, 350), BLACK)
@@ -86,7 +86,7 @@ def menu(pantalla, lista_eventos, fondo):
 def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_puntos, imagen_temporizador, derrota_music, victoria_music):
     
 
-    nombre = ingresar_nombre(pantalla).strip()
+    nombre = ingresar_nombre(pantalla,fondo).strip()
 
 
     while len(preguntas_copia) > 0:
@@ -95,7 +95,7 @@ def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_
         opciones = sacar_opciones_pregunta_dict(pregunta_dict)
         respuesta_correcta = pregunta_dict["respuesta_correcta"]
 
-        render_salir, rect_salir = crear_render_y_rect("Terminar juego", (1300, 700), BLACK)
+        render_salir, rect_salir = crear_render_y_rect("Terminar juego", (1400, 700), BLACK)
 
         #contador
         tiempo_inicial = pygame.time.get_ticks()  # milisegundos
@@ -194,7 +194,7 @@ def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_
 
             pygame.display.flip()
 
-    pantalla.fill(COLOR_CELESTE)
+    pantalla.blit(fondo, (0, 0))
     render_fin, rect_fin = crear_render_y_rect("Se acabaron las preguntas!", (800, 400), BLACK)
     pantalla.blit(render_fin, rect_fin)
     pygame.display.flip()
@@ -299,6 +299,10 @@ def dibujar_tablero(pantalla, tablero, posicion_jugador, jugador):
         # Dibujar borde
         pygame.draw.rect(pantalla, BLACK, rect, 2)
 
+
+        texto_valor, rect_valor = crear_render_y_rect(str(valor), rect.center, "Arial", BLACK)
+        pantalla.blit(texto_valor, rect_valor)
+
         # Dibujar imagen del jugador
         if i == posicion_jugador:
             rect_centro = jugador.get_rect(center=rect.center)
@@ -321,7 +325,7 @@ def mostrar_mensaje(pantalla, texto, fondo):
     render_mensaje, rect_mensaje = crear_render_y_rect(texto, (800, 400), BLACK)
     pantalla.blit(render_mensaje, rect_mensaje)
     pygame.display.flip()
-    pygame.time.delay(3000)
+    pygame.time.delay(3600)
 
 
 

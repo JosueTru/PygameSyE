@@ -56,6 +56,10 @@ def main(posicion, tablero):
                 estado = "salir"   
                 
             if estado == "menu":
+                if not mixer.music.get_busy():
+                    mixer.music.load("musica.mp3")
+                    mixer.music.set_volume(0.1)
+                    mixer.music.play(-1)
 
                 estado = menu(pantalla, lista_eventos, fondo)
             elif estado == "trivia":
