@@ -49,9 +49,9 @@ def ingresar_nombre(pantalla,fondo):
 def menu(pantalla, lista_eventos, fondo):
     fuente = pygame.font.SysFont("Arial", 30)
     
-    render_jugar, rect_jugar = crear_render_y_rect("Desea jugar", (800, 350), BLACK)
-    render_puntaje, rect_puntaje = crear_render_y_rect("Ver puntajes", (800,450), BLACK)
-    render_salir, rect_salir = crear_render_y_rect("Salir", (800,550), BLACK)
+    render_jugar, rect_jugar = crear_render_y_rect("Desea jugar", (800, 250), BLACK)
+    render_puntaje, rect_puntaje = crear_render_y_rect("Ver puntajes", (800,350), BLACK)
+    render_salir, rect_salir = crear_render_y_rect("Salir", (800,450), BLACK)
 
     estado_menu = "menu"
 
@@ -95,7 +95,7 @@ def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_
         opciones = sacar_opciones_pregunta_dict(pregunta_dict)
         respuesta_correcta = pregunta_dict["respuesta_correcta"]
 
-        render_salir, rect_salir = crear_render_y_rect("Terminar juego", (1400, 700), BLACK)
+        render_salir, rect_salir = crear_render_y_rect("Atrás", (65, 685), BLACK)
 
         #contador
         tiempo_inicial = pygame.time.get_ticks()  # milisegundos
@@ -127,7 +127,7 @@ def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_
 
                     if rect_salir.collidepoint(evento.pos):
                         guardar_datos(nombre, posicion)
-                        return posicion, "salir"
+                        return posicion, "menu"
 
                     
 
@@ -393,7 +393,7 @@ def ver_puntajes(pantalla,fondo):
             y += 50
 
         # Instrucción para volver
-        volver, rect_volver = crear_render_y_rect("Presioná ESC para volver al menú", (800, 750), None, BLACK)
+        volver, rect_volver = crear_render_y_rect("Presioná ESC para volver al menú", (800, 750), BLACK)
         pantalla.blit(volver, rect_volver)
 
         pygame.display.flip()
