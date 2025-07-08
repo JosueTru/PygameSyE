@@ -9,7 +9,7 @@ def crear_render_y_rect(texto:str, coordenadas:tuple, fuente, color:tuple=BLACK)
     return render, rect
 
 
-def ingresar_nombre(pantalla,fondo):
+def ingresar_nombre(pantalla:any,fondo:any)->str:
 
     nombre_jugador = ""
 
@@ -46,9 +46,7 @@ def ingresar_nombre(pantalla,fondo):
     return nombre_jugador
 
 
-def menu(pantalla, lista_eventos, fondo):
-    fuente = pygame.font.SysFont("Arial", 30)
-    
+def menu(pantalla:any, lista_eventos:list, fondo:any)->str:    
     render_jugar, rect_jugar = crear_render_y_rect("Desea jugar", (800, 250), BLACK)
     render_puntaje, rect_puntaje = crear_render_y_rect("Ver puntajes", (800,350), BLACK)
     render_salir, rect_salir = crear_render_y_rect("Salir", (800,450), BLACK)
@@ -83,7 +81,7 @@ def menu(pantalla, lista_eventos, fondo):
 
 
 
-def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_puntos, imagen_temporizador, derrota_music, victoria_music):
+def trivia(pantalla:any, preguntas_copia:list, posicion:int, fondo:any, jugador, tablero:list, imagen_puntos, imagen_temporizador, derrota_music, victoria_music)->tuple:
     
 
     nombre = ingresar_nombre(pantalla,fondo).strip()
@@ -207,18 +205,18 @@ def trivia(pantalla, preguntas_copia, posicion, fondo, jugador, tablero, imagen_
 
 
 
-def copiar_y_mezclar_lista(preguntas:list):
+def copiar_y_mezclar_lista(preguntas:list)->list:
     preguntas_copia = preguntas.copy()
     random.shuffle(preguntas_copia)
     return preguntas_copia
 
-def sacar_pregunta_dict(preguntas:list):
+def sacar_pregunta_dict(preguntas:list)->dict:
     pregunta_elegida = preguntas.pop()
 
     return pregunta_elegida
 
 
-def sacar_opciones_pregunta_dict(pregunta):
+def sacar_opciones_pregunta_dict(pregunta:dict)->tuple:
     letras = ["a","b","c"]
     render_y_rect_opciones = []
     posicion_x = 0
@@ -271,7 +269,7 @@ def calcular_direccion_tablero(posicion, calculo, tablero):
 
 
 
-def dibujar_tablero(pantalla, tablero, posicion_jugador, jugador):
+def dibujar_tablero(pantalla, tablero:list, posicion_jugador:int, jugador):
     x_inicial = 0
     y = 760
     ancho = 51.65
