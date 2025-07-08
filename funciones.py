@@ -4,7 +4,7 @@ from colores import *
 
 
 # Funcion reutilizable que crea render y rects
-def crear_render_y_rect(texto:str, coordenadas:tuple, fuente, color:tuple=BLACK):
+def crear_render_y_rect(texto:str, coordenadas:tuple, fuente, color:tuple=BLACK)->tuple:
     fuente = pygame.font.SysFont("Arial", 30)
     render = fuente.render(texto, True, color)
     rect = render.get_rect(center=coordenadas)
@@ -105,14 +105,14 @@ def trivia(pantalla:any, preguntas_copia:list, posicion:int, fondo:any, jugador,
 
         render_salir, rect_salir = crear_render_y_rect("Atrás", (65, 685), BLACK)
 
-        #contador
+        #Iniciar contador 
         tiempo_inicial = pygame.time.get_ticks()  # milisegundos
         tiempo_limite = 10000 
 
         flag = True
         while flag:
 
-            #contador
+            #logica contador
             tiempo_actual = pygame.time.get_ticks()
             tiempo_restante = max(0, tiempo_limite - (tiempo_actual - tiempo_inicial))
             if tiempo_restante == 0:
@@ -120,7 +120,7 @@ def trivia(pantalla:any, preguntas_copia:list, posicion:int, fondo:any, jugador,
                 posicion = calcular_direccion_tablero(posicion, -1, tablero)
                 flag = False
 
-
+            #fin contador ------------------------------------
             lista_eventos = pygame.event.get()
             for evento in lista_eventos:
                 if evento.type == pygame.QUIT:
@@ -156,7 +156,7 @@ def trivia(pantalla:any, preguntas_copia:list, posicion:int, fondo:any, jugador,
                             pygame.mixer.music.stop()
                             victoria_music.play()
     
-                        if estado_juego != "continua":
+                        elif estado_juego != "continua":
                             mostrar_mensaje(pantalla, f"¡{estado_juego}!", fondo)
                             guardar_datos(nombre, posicion)
 
@@ -328,10 +328,10 @@ def dibujar_tablero(pantalla, tablero:list, posicion_jugador:int, jugador):
 def verificar_fin_juego(posicion:int, tablero:list)->str:
     veredicto = "continua"
     if posicion <= 0:
-        veredicto = "Perdistee"
+        veredicto = "Perdiste, vuelve a intentarlo"
     elif posicion >= len(tablero)-1:
 
-        veredicto = "Ganastee"
+        veredicto = "Felicidades, ganastee!"
     return veredicto
 
 #Muestra el mensaje de cuando se queda sin preguntas
@@ -391,7 +391,7 @@ def ver_puntajes(pantalla,fondo):
     while mostrando:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
-                pygame.quit()
+                mostrando = False
 
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE:
@@ -407,7 +407,7 @@ def ver_puntajes(pantalla,fondo):
         # Mostrar cada puntaje
         y = 180
         for nombre, puntos in puntajes:
-            texto = f"{nombre} - {puntos} puntos"
+            texto = f"{nombre} - {puntos}"
             render, rect = crear_render_y_rect(texto, (800, y), None, BLACK)
             pantalla.blit(render, rect)
             y += 50
